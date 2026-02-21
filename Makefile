@@ -1,4 +1,4 @@
-.PHONY: test lint docgen
+.PHONY: test lint
 
 test:
 	nvim --headless -u tests/minimal_init.lua -c "PlenaryBustedDirectory tests/" -c "qa"
