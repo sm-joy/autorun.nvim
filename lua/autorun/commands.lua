@@ -1,16 +1,20 @@
-local M = {}
+local commands = {}
 
-function M.setup()
+function commands.setup()
 	local augroup = vim.api.nvim_create_augroup("AutoRun", { clear = true })
-	local py_runner = require("autorun.runners.py")
+	local runners = require("autorun.runners")
 
 	vim.api.nvim_create_autocmd("FileType", {
-		pattern = "python",
+		pattern = runners.supported(),
 		group = augroup,
-		callback = function()
-			vim.keymap.set("n", "<leader>rr", py_runner.run, { buffer = true })
+		callback = function(event)
+			vim.keymap.set("n", "<leader>rr", function() runners.run(event.match) end, {
+				buffer = event.buf,
+				desc = "autorun: run file",
+				silent = true,
+			})
 		end,
 	})
 end
 
-return M
+return commands
