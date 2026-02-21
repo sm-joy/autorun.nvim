@@ -21,8 +21,8 @@ local function locate_compiler_path()
   return nil
 end
 
-local function check_config(config)
-  if not config.compiler_path or config.compiler_path == "" then
+local function check_config(cfg)
+  if not cfg.compiler_path or cfg.compiler_path == "" then
     vim.notify("autorun: Compiler executable not found", vim.log.levels.ERROR)
     return false
   end

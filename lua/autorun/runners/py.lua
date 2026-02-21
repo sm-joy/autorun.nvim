@@ -30,8 +30,8 @@ local function locate_python_exe()
   return nil
 end
 
-local function check_config(config)
-  if not config.python_path or config.python_path == "" then
+local function check_config(cfg)
+  if not cfg.python_path or cfg.python_path == "" then
     vim.notify("autorun: Python executable not found in PATH", vim.log.levels.ERROR)
     return false
   end
