@@ -86,8 +86,12 @@ describe("runner registry", function()
 
   it("loads runner module without errors", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     assert.has_no.errors(function()
@@ -115,12 +119,16 @@ describe("py runner", function()
       executable = function(path)
         return path == venv_python and 1 or 0
       end,
-      exepath = function(_) return venv_python end,
+      exepath = function(_)
+        return venv_python
+      end,
     })
 
     -- mock vim.loop.cwd
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return cwd end
+    vim.loop.cwd = function()
+      return cwd
+    end
 
     local runner = require("autorun.runners.py")
     runner.setup()
@@ -134,14 +142,20 @@ describe("py runner", function()
     local restore = mock_fn({
       executable = function(cmd)
         -- no venv paths, only system python
-        if cmd == "python" then return 1 end
+        if cmd == "python" then
+          return 1
+        end
         return 0
       end,
-      exepath = function(_) return "/usr/bin/python" end,
+      exepath = function(_)
+        return "/usr/bin/python"
+      end,
     })
 
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return "/home/user/project" end
+    vim.loop.cwd = function()
+      return "/home/user/project"
+    end
 
     local runner = require("autorun.runners.py")
     runner.setup()
@@ -154,14 +168,20 @@ describe("py runner", function()
   it("setup() falls back to python3 when python not found", function()
     local restore = mock_fn({
       executable = function(cmd)
-        if cmd == "python3" then return 1 end
+        if cmd == "python3" then
+          return 1
+        end
         return 0
       end,
-      exepath = function(_) return "/usr/bin/python3" end,
+      exepath = function(_)
+        return "/usr/bin/python3"
+      end,
     })
 
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return "/home/user/project" end
+    vim.loop.cwd = function()
+      return "/home/user/project"
+    end
 
     local runner = require("autorun.runners.py")
     runner.setup()
@@ -173,12 +193,18 @@ describe("py runner", function()
 
   it("setup() sets nil when no python found", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return "/home/user/project" end
+    vim.loop.cwd = function()
+      return "/home/user/project"
+    end
 
     local runner = require("autorun.runners.py")
     runner.setup()
@@ -190,12 +216,18 @@ describe("py runner", function()
 
   it("get_command() returns nil when python not found", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return "/home/user/project" end
+    vim.loop.cwd = function()
+      return "/home/user/project"
+    end
 
     local runner = require("autorun.runners.py")
     runner.setup()
@@ -207,13 +239,21 @@ describe("py runner", function()
 
   it("get_command() wraps python path and filename in quotes", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "python" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/python" end,
-      expand = function(_) return "/home/user/script.py" end,
+      executable = function(cmd)
+        return cmd == "python" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/python"
+      end,
+      expand = function(_)
+        return "/home/user/script.py"
+      end,
     })
 
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return "/home/user/project" end
+    vim.loop.cwd = function()
+      return "/home/user/project"
+    end
 
     local runner = require("autorun.runners.py")
     runner.setup()
@@ -235,8 +275,12 @@ describe("c runner", function()
 
   it("setup() finds gcc when available", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "gcc" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/gcc" end,
+      executable = function(cmd)
+        return cmd == "gcc" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/gcc"
+      end,
     })
 
     local runner = require("autorun.runners.c")
@@ -248,8 +292,12 @@ describe("c runner", function()
 
   it("setup() respects preferred compiler from config", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "clang" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/clang" end,
+      executable = function(cmd)
+        return cmd == "clang" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/clang"
+      end,
     })
 
     -- set preferred compiler in config before requiring runner
@@ -265,8 +313,12 @@ describe("c runner", function()
 
   it("setup() sets nil when no compiler found", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     local runner = require("autorun.runners.c")
@@ -278,8 +330,12 @@ describe("c runner", function()
 
   it("get_command() returns nil when no compiler", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     local runner = require("autorun.runners.c")
@@ -291,14 +347,24 @@ describe("c runner", function()
 
   it("get_command() produces correct command on linux", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "gcc" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/gcc" end,
+      executable = function(cmd)
+        return cmd == "gcc" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/gcc"
+      end,
       expand = function(arg)
-        if arg == "%:p" then return "/home/user/main.c" end
-        if arg == "%:t:r" then return "main" end
+        if arg == "%:p" then
+          return "/home/user/main.c"
+        end
+        if arg == "%:t:r" then
+          return "main"
+        end
         return ""
       end,
-      has = function(_) return 0 end, -- not win32
+      has = function(_)
+        return 0
+      end, -- not win32
     })
 
     local runner = require("autorun.runners.c")
@@ -315,14 +381,24 @@ describe("c runner", function()
 
   it("get_command() uses .exe and .\\ prefix on windows", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "gcc" and 1 or 0 end,
-      exepath = function(_) return "C:/MinGW/bin/gcc.exe" end,
+      executable = function(cmd)
+        return cmd == "gcc" and 1 or 0
+      end,
+      exepath = function(_)
+        return "C:/MinGW/bin/gcc.exe"
+      end,
       expand = function(arg)
-        if arg == "%:p" then return "C:/project/main.c" end
-        if arg == "%:t:r" then return "main" end
+        if arg == "%:p" then
+          return "C:/project/main.c"
+        end
+        if arg == "%:t:r" then
+          return "main"
+        end
         return ""
       end,
-      has = function(_) return 1 end, -- win32
+      has = function(_)
+        return 1
+      end, -- win32
     })
 
     local runner = require("autorun.runners.c")
@@ -346,8 +422,12 @@ describe("cpp runner", function()
 
   it("setup() finds g++ when available", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "g++" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/g++" end,
+      executable = function(cmd)
+        return cmd == "g++" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/g++"
+      end,
     })
 
     local runner = require("autorun.runners.cpp")
@@ -359,8 +439,12 @@ describe("cpp runner", function()
 
   it("setup() falls back to clang++ when g++ not found", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "clang++" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/clang++" end,
+      executable = function(cmd)
+        return cmd == "clang++" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/clang++"
+      end,
     })
 
     local runner = require("autorun.runners.cpp")
@@ -372,8 +456,12 @@ describe("cpp runner", function()
 
   it("setup() sets nil when no compiler found", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     local runner = require("autorun.runners.cpp")
@@ -385,8 +473,12 @@ describe("cpp runner", function()
 
   it("get_command() returns nil when no compiler", function()
     local restore = mock_fn({
-      executable = function(_) return 0 end,
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end,
+      exepath = function(_)
+        return ""
+      end,
     })
 
     local runner = require("autorun.runners.cpp")
@@ -398,14 +490,24 @@ describe("cpp runner", function()
 
   it("get_command() produces correct command on linux", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "g++" and 1 or 0 end,
-      exepath = function(_) return "/usr/bin/g++" end,
+      executable = function(cmd)
+        return cmd == "g++" and 1 or 0
+      end,
+      exepath = function(_)
+        return "/usr/bin/g++"
+      end,
       expand = function(arg)
-        if arg == "%:p" then return "/home/user/main.cpp" end
-        if arg == "%:t:r" then return "main" end
+        if arg == "%:p" then
+          return "/home/user/main.cpp"
+        end
+        if arg == "%:t:r" then
+          return "main"
+        end
         return ""
       end,
-      has = function(_) return 0 end, -- not win32
+      has = function(_)
+        return 0
+      end, -- not win32
     })
 
     local runner = require("autorun.runners.cpp")
@@ -422,14 +524,24 @@ describe("cpp runner", function()
 
   it("get_command() uses .exe and .\\ prefix on windows", function()
     local restore = mock_fn({
-      executable = function(cmd) return cmd == "g++" and 1 or 0 end,
-      exepath = function(_) return "C:/MinGW/bin/g++.exe" end,
+      executable = function(cmd)
+        return cmd == "g++" and 1 or 0
+      end,
+      exepath = function(_)
+        return "C:/MinGW/bin/g++.exe"
+      end,
       expand = function(arg)
-        if arg == "%:p" then return "C:/project/main.cpp" end
-        if arg == "%:t:r" then return "main" end
+        if arg == "%:p" then
+          return "C:/project/main.cpp"
+        end
+        if arg == "%:t:r" then
+          return "main"
+        end
         return ""
       end,
-      has = function(_) return 1 end, -- win32
+      has = function(_)
+        return 1
+      end, -- win32
     })
 
     local runner = require("autorun.runners.cpp")
@@ -455,12 +567,16 @@ describe("runners.run()", function()
     -- mock terminal to detect if it gets called
     local terminal_called = false
     package.loaded["autorun.terminal"] = {
-      run = function(_) terminal_called = true end,
+      run = function(_)
+        terminal_called = true
+      end,
     }
 
     local orig_expand = vim.fn.expand
     vim.fn.expand = function(arg)
-      if arg == "%" then return "" end -- unnamed buffer
+      if arg == "%" then
+        return ""
+      end -- unnamed buffer
       return orig_expand(arg)
     end
 
@@ -477,21 +593,33 @@ describe("runners.run()", function()
 
     local terminal_called = false
     package.loaded["autorun.terminal"] = {
-      run = function(_) terminal_called = true end,
+      run = function(_)
+        terminal_called = true
+      end,
     }
 
     local restore = mock_fn({
-      executable = function(_) return 0 end, -- no compiler
-      exepath = function(_) return "" end,
+      executable = function(_)
+        return 0
+      end, -- no compiler
+      exepath = function(_)
+        return ""
+      end,
       expand = function(arg)
-        if arg == "%" then return "/home/user/main.cpp" end
+        if arg == "%" then
+          return "/home/user/main.cpp"
+        end
         return "/home/user/main.cpp"
       end,
-      has = function(_) return 0 end,
+      has = function(_)
+        return 0
+      end,
     })
 
     local orig_cwd = vim.loop.cwd
-    vim.loop.cwd = function() return "/home/user" end
+    vim.loop.cwd = function()
+      return "/home/user"
+    end
 
     local runners = require("autorun.runners")
     runners.run("cpp")
