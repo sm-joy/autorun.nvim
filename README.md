@@ -4,12 +4,15 @@
 
 Run your code without leaving Neovim.
 
+
+![autorun demo](doc/asset/autorun.nvim-alpha-preview.gif)
+
+
 ## Features
 
 - Runs the current file with `<leader>rr`
-- Opens output in a vertical terminal split
-- Configurable split size and style
-- Currently supports: **.py(Python)**
+- Opens output in a floating window
+- Currently supports: **.py(Python)** **.c(C)** **.cpp(C++)**
 
 ## Requirements
 
@@ -32,10 +35,7 @@ Default values:
 ```lua
 {
   "sm-joy/autorun.nvim",
-  opts = {
-    term_style = "vertical",  -- "vertical" or "horizontal"
-    term_size = "40",         -- width (vertical) or height (horizontal)
-  },
+  opts = {},
 }
 ```
 
@@ -52,11 +52,13 @@ Open any supported file and press:
 | Language | Runner |
 |:---:|:---:|
 | Python | `python <file>` |
+| C | `c <file>` |
+| C++ | `cpp <file>` |
 | More coming soon | — |
 
 ## Roadmap
 
-- [ ] C/C++ Single File Runner
+- [✔] C/C++ Single File Runner
 - [ ] C/C++ Makefile Support
 - [ ] Rust runner
 - [ ] Go runner
