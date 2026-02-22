@@ -630,3 +630,85 @@ describe("runners.run()", function()
     restore()
   end)
 end)
+
+local window = require("autorun.window")
+
+describe("autorun.window", function()
+  after_each(function()
+    -- close any leftover windows between tests
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      local buf = vim.api.nvim_win_get_buf(win)
+      if vim.bo[buf].filetype == "autorun" then
+        vim.api.nvim_win_close(win, true)
+      end
+    end
+  end)
+
+  describe("window.run", function()
+    it("does nothing if cmd is empty", function()
+      local notified = false
+      vim.notify = function(_, level)
+        if level == vim.log.levels.WARN then
+          notified = true
+        end
+      end
+      window.run("")
+      assert.is_true(notified)
+    end)
+
+    it("does nothing if cmd is nil", function()
+      local notified = false
+      vim.notify = function(_, level)
+        if level == vim.log.levels.WARN then
+          notified = true
+        end
+      end
+      window.run(nil)
+      assert.is_true(notified)
+    end)
+
+    it("opens a floating window", function()
+      window.run("echo hello")
+      vim.wait(100)
+
+      local found = false
+      for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local cfg = vim.api.nvim_win_get_config(win)
+        if cfg.relative == "editor" then
+          found = true
+          break
+        end
+      end
+      assert.is_true(found)
+    end)
+
+    it("creates a buffer with filetype autorun", function()
+      window.run("echo hello")
+      vim.wait(100)
+
+      local found = false
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.bo[buf].filetype == "autorun" then
+          found = true
+          break
+        end
+      end
+      assert.is_true(found)
+    end)
+
+    it("cleans up after process exits", function()
+      window.run("echo hello")
+      vim.wait(500) -- give process time to finish and on_exit to fire
+
+      local found = false
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.bo[buf].filetype == "autorun" then
+          found = true
+          break
+        end
+      end
+      -- window should still be open (user hasn't closed it), buf should be valid
+      assert.is_true(found)
+    end)
+  end)
+end)

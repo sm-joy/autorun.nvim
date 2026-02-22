@@ -1,4 +1,4 @@
-local terminal = require("autorun.terminal")
+local window = require("autorun.window")
 local runners = {}
 
 runners.supported_runners = {
@@ -55,7 +55,7 @@ function runners.run(filetype)
   end
 
   vim.cmd("silent! write")
-  terminal.run(command)
+  window.run(command)
 end
 
 return runners
