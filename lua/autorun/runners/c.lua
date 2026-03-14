@@ -8,8 +8,8 @@ M.config = {
 local compilers = { "gcc", "clang", "clang-cl", "cl" }
 
 local function locate_compiler_path()
-  if config.prefered_c_compiler and vim.fn.executable(config.prefered_c_compiler) == 1 then
-    return vim.fn.exepath(config.prefered_c_compiler)
+  if config.options.prefered_compilers.c and vim.fn.executable(config.options.prefered_compilers.c) == 1 then
+    return vim.fn.exepath(config.options.prefered_compilers.c)
   end
 
   for _, compiler in ipairs(compilers) do

@@ -8,13 +8,10 @@ function commands.setup()
     pattern = runners.supported(),
     group = augroup,
     callback = function(event)
+      local opts = { buffer = event.buf, silent = true }
       vim.keymap.set("n", "<leader>rr", function()
         runners.run(event.match)
-      end, {
-        buffer = event.buf,
-        desc = "autorun: run file",
-        silent = true,
-      })
+      end, vim.tbl_extend("force", opts, { desc = "autorun: run file" }))
     end,
   })
 end

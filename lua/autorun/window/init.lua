@@ -1,5 +1,34 @@
+local config = require("autorun.config")
 local window = {}
-window.has_footer = vim.fn.has("nvim-0.10") == 1
+
+window.supported_win_types = {
+  float = "autorun.window.float",
+  split = "autorun.window.split",
+}
+
+window.active_win_mod = nil
+
+function window.setup()
+  local win_type = config.options.window.type
+  local win_mod_path = window.supported_win_types[win_type]
+
+  if not win_mod_path then
+    vim.notify(
+      "autorun: no supported window module for " .. win_type .. ". Falling back to default.",
+      vim.log.levels.WARN
+    )
+    win_mod_path = window.supported_win_types["float"]
+    config.options.window.type = "float"
+  end
+
+  local ok, win_mod = pcall(require, win_mod_path)
+  if not ok then
+    vim.notify("autorun: failed to load window type for " .. win_mod, vim.log.levels.ERROR)
+    return
+  end
+
+  window.active_win_mod = win_mod
+end
 
 local function close_win(buf, win, chan)
   if chan and chan > 0 and vim.fn.jobwait({ chan }, 0)[1] == -1 then
@@ -52,57 +81,28 @@ local function create_buf()
   return buf
 end
 
-local function create_win(buf)
-  local width = math.floor(vim.o.columns * 0.8)
-  local height = math.floor(vim.o.lines * 0.8)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = math.floor((vim.o.columns - width) / 2)
-
-  local win_config = {
-    relative = "editor",
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = "minimal",
-    border = "rounded",
-    title = "AutoRun",
-    title_pos = "center",
-  }
-
-  if window.has_footer then
-    win_config.footer = " <Esc><Esc> to close "
-    win_config.footer_pos = "center"
-  end
-
-  local win = vim.api.nvim_open_win(buf, true, win_config)
-
-  vim.wo[win].wrap = false
-  vim.wo[win].cursorline = true
-  vim.wo[win].number = false
-  vim.wo[win].relativenumber = false
-  vim.wo[win].winhl = "Normal:AutoRunNormal,FloatBorder:AutoRunNormal"
-
-  return win
-end
-
 function window.run(cmd)
   if not cmd or cmd == "" then
     vim.notify("autorun: no command provided", vim.log.levels.WARN)
     return
   end
 
+  if not window.active_win_mod then
+    vim.notify("autorun: window module not loaded", vim.log.levels.ERROR)
+    return
+  end
+
   local on_process_exit
 
   local buf = create_buf()
-  local win = create_win(buf)
+  local win = window.active_win_mod.create_win(buf)
   local chan = vim.fn.termopen(cmd, {
     on_exit = function()
       vim.schedule(function()
         on_process_exit()
         vim.cmd("stopinsert")
         if vim.api.nvim_win_is_valid(win) then
-          if window.has_footer then
+          if config.options.window.type == "float" then
             vim.api.nvim_win_set_config(win, {
               footer = " <q> or <Esc> to close ",
             })
